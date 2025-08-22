@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Number Guessing Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🔢 Tebak Angka</h1>
+    <p class="subtitle">Tebak angka antara <strong>1 - 100</strong>!</p>
+
+    <div class="input-group">
+      <input type="number" id="guess-input" placeholder="Masukkan tebakanmu" min="1" max="100" />
+      <button id="check-btn">TEBAK</button>
+    </div>
+
+    <div id="message" class="message">Silakan masukkan angka...</div>
+
+    <div class="stats">
+      <span>🔁 Tebakan: <strong id="attempts">0</strong></span>
+      <span>🏆 Rekor: <strong id="best-score">-</strong></span>
+    </div>
+
+    <button id="reset-btn" class="reset-btn">🔄 Main Lagi</button>
+  </div>
+
+  <script type="module" src="script/main.js"></script>
+</body>
+</html>
