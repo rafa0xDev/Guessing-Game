@@ -2,59 +2,55 @@
 // Penghubung antara DOM dan logika game
 // Tugas: dengar event tombol, ambil input, panggil fungsi
 
+import { setNewGame, checkGuess, getAttempts } from "./game.js";
+import { displayMessage, updateAttempts, resetDisplay } from "./ui.js";
+import { getBestScore, saveBestScore } from "./storage.js";
+
 const input = document.getElementById("guess-input");
 const checkBtn = document.getElementById("check-btn");
 const resetBtn = document.getElementById("reset-btn");
-const messageEl = document.getElementById("message");
-const attemptsEl = document.getElementById("attempts");
+const bestScoreEl = document.getElementById("best-score");
 
-let targetNumber = 0;
-let attempts = 0;
+function updateBestScoreDisplay() {
+  const best = getBestScore();
+  bestScoreEl.textContent = best ? best : "-";
+}
 
 function startGame() {
-    targetNumber = Math.floor(Math.random() * 100) + 1;
-    attempts = 0;
-    attemptsEl.textContent = attempts;
-    messageEl.textContent = "answer your guess";
-    messageEl.style.color = "#e0f7ff";
-    input.value = "";
-    input.focus();
+  setNewGame();
+  resetDisplay();
+  updateAttempts(0);
+  updateBestScoreDisplay();
+  checkBtn.disabled = false;
 }
 
 checkBtn.addEventListener("click", () => {
-    const tebakan = Number(input.value);
+  const guess = Number(input.value);
+  if (guess < 1 || guess > 100 || isNaN(guess)) {
+    displayMessage("Masukkan angka 1-100!", "#ff4d4d");
+    return;
+  }
+  const { result, attempts } = checkGuess(guess);
+  updateAttempts(attempts);
 
-    if(tebakan < 1 || tebakan > 100 || isNaN(tebakan)) {
-        messageEl.textContent = "Please enter a valid number between 1 and 100!";
-        return;
-    }
-
-    attempts++
-    attemptsEl.textContent = attempts;
-
-    if(tebakan < targetNumber) {
-        messageEl.textContent = "Too low!";
-        messageEl.style.color = "#ffa64d";
-    } else if(tebakan > targetNumber) {
-        messageEl.textContent = "Too high!";
-         messageEl.style.color = "#ffa64d";
-    } else {
-        messageEl.textContent = "Congratulations! You guessed it!";
-        messageEl.style.color = "#4ade80";
-        input.disabled = true;
-        checkBtn.disabled = true;
-    }
-
-    input.value = "";
-    input.focus();
+  if (result === "Too low!") {
+    displayMessage("Terlalu rendah!", "#ffa64d");
+  } else if (result === "Too high!") {
+    displayMessage("Terlalu tinggi!", "#ffa64d");
+  } else {
+    displayMessage("Selamat! Kamu benar!", "#4ade80");
+    input.disabled = true;
+    checkBtn.disabled = true;
+    saveBestScore(attempts);
+    updateBestScoreDisplay();
+  }
+  input.value = "";
+  input.focus();
 });
 
 resetBtn.addEventListener("click", () => {
-    input.disabled = false;
-    checkBtn.disabled = false;
-    startGame();
-});
-
-window.addEventListener("DOMContentLoaded", function () {
+  input.disabled = false;
   startGame();
 });
+
+window.addEventListener("DOMContentLoaded", startGame);
